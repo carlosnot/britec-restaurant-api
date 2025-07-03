@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "tsx --watch --env-file=.env src/server.ts",
     "build": "tsc --project tsconfig.json",
-    "start": "node --env-file=.env dist/server.js",
+    "start": "node dist/server.js",
     "clean": "rm -rf dist node_modules",
     "test": "tsx --watch --env-file=.env src/test/test.ts"
   },
