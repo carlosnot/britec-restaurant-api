@@ -9,7 +9,8 @@ export class UserRepository {
         SELECT 
           CodCliente as id,
           Nome as username,
-          Senha as password
+          Senha as password,
+          master as admin
         FROM supermercado.usuariopdv
           WHERE Nome = ?
         `,
