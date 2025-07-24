@@ -14,4 +14,8 @@ export async function orderProductRoutes(fastify: FastifyInstance) {
     "/orders/:orderId/products/:orderProductId",
     orderProductController.updateOrderProductById.bind(orderProductController)
   );
+  fastify.put(
+    "/orders/:orderId/products/print",
+    orderProductController.updatePrintedOrderProduct.bind(orderProductController)
+  );
 }

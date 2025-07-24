@@ -31,4 +31,8 @@ export class OrderProductService {
   async updateOrderProductById(orderId: number, orderProductId: number, quantity: number): Promise<boolean> {
     return this.orderProductRepository.updateById(orderId, orderProductId, quantity);
   }
+
+  async updatePrintedOrderProduct(barCodes: string[], orderId: number): Promise<boolean> {
+    return this.orderProductRepository.updatePrinted(barCodes, orderId);
+  }
 }

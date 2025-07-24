@@ -14,7 +14,8 @@ export class OrderProductRepository {
             qtd as quantity,
             preco as price,
             und as unit,
-            atendente as employee
+            atendente as employee,
+            Impresso as printed
         FROM supermercado.a_pedidoproduto
         WHERE nPedido = ?
         `,
@@ -48,7 +49,8 @@ export class OrderProductRepository {
             preco,
             und,
             obs,
-            atendente
+            atendente,
+            impresso
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [orderId, barCode, description, quantity, price, unit, " ", employee]
@@ -69,6 +71,7 @@ export class OrderProductRepository {
         price,
         unit,
         employee,
+        printed: 0,
       };
     } catch (error) {
       console.error("Database error:", error);
@@ -112,6 +115,61 @@ export class OrderProductRepository {
     } catch (error) {
       console.error("Database error:", error);
       throw new Error("Failed to update Products from Order.");
+    }
+  }
+
+  async getPrinterCod(barCode: string): Promise<number> {
+    try {
+      const result = await Database.query(
+        ` SELECT codImpressora 
+          FROM supermercado.itensimpressora
+          WHERE codigobarra = ?
+        `,
+        [barCode]
+      );
+
+      if (Array.isArray(result) && result.length > 0) {
+        return result[0].codImpressora || 0;
+      }
+      return 0;
+    } catch (error) {
+      console.error("Database error:", error);
+      throw new Error("Failed to get Printer Cod.");
+    }
+  }
+
+  async updatePrinted(barCodes: string[], orderId: number): Promise<boolean> {
+    try {
+      let anyUpdated = false;
+
+      for (const barCode of barCodes) {
+        const printerCod = await this.getPrinterCod(barCode);
+
+        if (printerCod === 0) {
+          continue;
+        }
+
+        const result = await Database.query(
+          `
+        UPDATE supermercado.a_pedidoproduto
+        SET impresso = 1,
+           codImpressora = ?
+        WHERE CodigoBarras = ?    
+        AND nPedido = ?
+        AND impresso = 0
+        `,
+          [printerCod, barCode, orderId]
+        );
+
+        if ((result as any).affectedRows > 0) {
+          anyUpdated = true;
+        }
+      }
+
+      return anyUpdated;
+    } catch (error) {
+      console.error("Database error:", error);
+      throw new Error("Failed to update Printed Status Product.");
     }
   }
 }

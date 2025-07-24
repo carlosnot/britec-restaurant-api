@@ -7,4 +7,5 @@ export interface OrderProduct {
   price: number;
   unit: string;
   employee: string;
+  printed: number;
 }

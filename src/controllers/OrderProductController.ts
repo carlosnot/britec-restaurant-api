@@ -101,4 +101,29 @@ export class OrderProductController {
       return reply.status(500).send({ message });
     }
   }
+
+  async updatePrintedOrderProduct(
+    request: FastifyRequest<{ Params: { orderId: number }; Body: { barCodes: string[] } }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const { orderId } = request.params;
+      const { barCodes } = request.body;
+
+      if (!barCodes || !Array.isArray(barCodes)) {
+        return reply.status(400).send({ message: "barCodes must be an array" });
+      }
+
+      const updated = await this.orderProductService.updatePrintedOrderProduct(barCodes, orderId);
+
+      if (!updated) {
+        return reply.status(404).send({ message: "No products were updated" });
+      }
+
+      return reply.send({ success: true });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Internal server error";
+      return reply.status(500).send({ message });
+    }
+  }
 }
