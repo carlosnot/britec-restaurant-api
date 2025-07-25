@@ -49,8 +49,7 @@ export class OrderProductRepository {
             preco,
             und,
             obs,
-            atendente,
-            impresso
+            atendente
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [orderId, barCode, description, quantity, price, unit, " ", employee]
